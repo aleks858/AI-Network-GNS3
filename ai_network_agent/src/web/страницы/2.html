@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Network Agent - Премиум интерфейс</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0B1120 0%, #1A2639 100%);
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Главный контейнер */
+        .dashboard {
+            width: 100%;
+            max-width: 1800px;
+            height: calc(100vh - 48px);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Шапка */
+        .header {
+            padding: 20px 28px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-badge {
+            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 30px;
+            margin-left: 8px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .time {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22C55E;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .status-text {
+            color: #22C55E;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Основная сетка */
+        .main-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            gap: 20px;
+            padding: 24px;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* Общие стили панелей */
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .panel-header {
+            padding: 20px 20px 12px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0B1120;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .panel-header h2::before {
+            font-size: 20px;
+        }
+
+        .panel-header.left h2::before {
+            content: "📊";
+        }
+
+        .panel-header.center h2::before {
+            content: "🌐";
+        }
+
+        .panel-header.right h2::before {
+            content: "💬";
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        /* Левая панель - Устройства */
+        .device-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .device-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .device-item:hover {
+            border-color: #3B82F6;
+            background: #EFF6FF;
+            transform: translateX(4px);
+            box-shadow: 0 8px 16px -8px rgba(59, 130, 246, 0.3);
+        }
+
+        .device-item.selected {
+            background: #EFF6FF;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .device-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 14px;
+        }
+
+        .status-online {
+            background: #22C55E;
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+        }
+
+        .status-offline {
+            background: #EF4444;
+        }
+
+        .status-warning {
+            background: #F59E0B;
+        }
+
+        .device-info {
+            flex: 1;
+        }
+
+        .device-name {
+            font-weight: 600;
+            color: #0F172A;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .device-details {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+        }
+
+        .device-port {
+            color: #64748B;
+            background: #E2E8F0;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .device-type {
+            color: #64748B;
+        }
+
+        .device-type.warning {
+            color: #F59E0B;
+        }
+
+        .device-type.offline {
+            color: #EF4444;
+        }
+
+        /* Центр - Топология */
+        .topology-container {
+            background: linear-gradient(145deg, #0F172A 0%, #1E293B 100%);
+            border-radius: 20px;
+            padding: 30px 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topology-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .topology-node {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px 12px;
+            text-align: center;
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .topology-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .topology-node.core {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            border: none;
+        }
+
+        .topology-node.agg {
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+            border: none;
+        }
+
+        .topology-node.ce {
+            background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+            border: none;
+        }
+
+        .topology-node::after {
+            content: "▼";
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+        }
+
+        .topology-node:last-child::after,
+        .topology-node:nth-last-child(2)::after {
+            display: none;
+        }
+
+        .topology-bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+        }
+
+        /* Правая панель - Чат */
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #F8FAFC;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message.assistant {
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 13px;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .message-bubble {
+            background: white;
+            color: #0F172A;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E2E8F0;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #94A3B8;
+            margin-top: 4px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 30px;
+            padding: 12px 18px;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .chat-send {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Нижняя панель - Консоль */
+        .console-wrapper {
+            margin-top: 20px;
+            padding: 0 24px 24px 24px;
+        }
+
+        .console-panel {
+            background: #0F172A;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .console-header {
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .console-title {
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .console-title::before {
+            content: "📟";
+            font-size: 16px;
+        }
+
+        .console-clear {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .console-clear:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .console-content {
+            height: 120px;
+            overflow-y: auto;
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            background: #0A0F1E;
+        }
+
+        .console-line {
+            color: #4AFC4A;
+            margin: 4px 0;
+            white-space: pre-wrap;
+        }
+
+        .console-line.success {
+            color: #22C55E;
+        }
+
+        .console-line.warning {
+            color: #F59E0B;
+        }
+
+        .console-line.error {
+            color: #EF4444;
+        }
+
+        .console-input-area {
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .console-prompt {
+            color: #4AFC4A;
+            font-size: 14px;
+            font-family: monospace;
+        }
+
+        .console-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #4AFC4A;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .console-input::placeholder {
+            color: rgba(74, 252, 74, 0.3);
+        }
+
+        /* Кнопки действий */
+        .action-buttons {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            color: white;
+            box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -6px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .console-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .console-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Шапка -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">🌐</span>
+                    <span class="logo-text">AI NETWORK AGENT</span>
+                    <span class="logo-badge">v7.0</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="time">2026-03-17 22:50</div>
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Система готова</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Основная сетка -->
+        <div class="main-grid">
+            <!-- Левая панель - Элементы сети -->
+            <div class="panel">
+                <div class="panel-header left">
+                    <h2>ЭЛЕМЕНТЫ СЕТИ</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="device-list">
+                        <div class="device-item selected">
+                            <div class="device-status status-online"></div>
+                            <div class="device-info">
+                                <div class="device-name">CORE-1</div>
+                                <div class="device-details">
+                                    <span class="device-port">5002</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-status status-online"></div>
+                            <div class="device-info">
+                                <div class="device-name">CORE-2</div>
+                                <div class="device-details">
+                                    <span class="device-port">5003</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-status status-online"></div>
+                            <div class="device-info">
+                                <div class="device-name">AGG-1</div>
+                                <div class="device-details">
+                                    <span class="device-port">5004</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-status status-warning"></div>
+                            <div class="device-info">
+                                <div class="device-name">AGG-2</div>
+                                <div class="device-details">
+                                    <span class="device-port">5005</span>
+                                    <span class="device-type warning">(высокая нагрузка)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-status status-online"></div>
+                            <div class="device-info">
+                                <div class="device-name">CE-1</div>
+                                <div class="device-details">
+                                    <span class="device-port">5000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-status status-offline"></div>
+                            <div class="device-info">
+                                <div class="device-name">CE-2</div>
+                                <div class="device-details">
+                                    <span class="device-port">5001</span>
+                                    <span class="device-type offline">(offline)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Центральная панель - Топология -->
+            <div class="panel">
+                <div class="panel-header center">
+                    <h2>ТОПОЛОГИЯ СЕТИ</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="topology-container">
+                        <div class="topology-grid">
+                            <div class="topology-node core">CORE-1</div>
+                            <div class="topology-node core">CORE-2</div>
+                            <div></div>
+                            <div class="topology-node agg">AGG-1</div>
+                            <div class="topology-node agg">AGG-2</div>
+                            <div></div>
+                            <div class="topology-node ce">CE-1</div>
+                            <div class="topology-node ce">CE-2</div>
+                        </div>
+                        <div class="topology-bg-pattern"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая панель - Чат -->
+            <div class="panel">
+                <div class="panel-header right">
+                    <h2>ЧАТ С AI</h2>
+                </div>
+                <div class="panel-content chat-panel">
+                    <div class="chat-messages">
+                        <div class="message assistant">
+                            <div class="message-bubble">
+                                Здравствуйте! Я AI-агент управления сетью. Чем могу помочь?
+                            </div>
+                            <div class="message-time">16:45:23</div>
+                        </div>
+                        <div class="message user">
+                            <div class="message-bubble">
+                                Покажи интерфейсы на CORE-1
+                            </div>
+                            <div class="message-time">16:45:30</div>
+                        </div>
+                        <div class="message assistant">
+                            <div class="message-bubble">
+                                оркестратору: CORE1 стоп оркестратор<br>
+                                оркестратору: show ip interface brief стоп оркестратор
+                            </div>
+                            <div class="message-time">16:45:35</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" placeholder="Введите сообщение...">
+                        <button class="chat-send">➤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Нижняя панель - Консоль -->
+        <div class="console-wrapper">
+            <div class="console-panel">
+                <div class="console-header">
+                    <span class="console-title">КОНСОЛЬ УПРАВЛЕНИЯ</span>
+                    <button class="console-clear">ОЧИСТИТЬ</button>
+                </div>
+                <div class="console-content">
+                    <div class="console-line">> Система инициализирована</div>
+                    <div class="console-line success">✅ Подключение к CORE-1 установлено</div>
+                    <div class="console-line">> Выполнение команды: show ip interface brief</div>
+                    <div class="console-line">Interface       IP-Address      OK? Method Status</div>
+                    <div class="console-line">GigabitEthernet0/0 192.168.1.1 YES DHCP up</div>
+                    <div class="console-line warning">⚠️ Высокая загрузка на AGG-2</div>
+                    <div class="console-line error">❌ CE-2 не отвечает</div>
+                </div>
+                <div class="console-input-area">
+                    <span class="console-prompt">></span>
+                    <input type="text" class="console-input" placeholder="Введите команду..." value="show version">
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="action-buttons">
+            <button class="btn btn-secondary">📂 ОТКРЫТЬ</button>
+            <button class="btn btn-primary">✅ ПРИМЕНИТЬ</button>
+        </div>
+    </div>
+
+    <!-- Скрипт для интерактивности -->
+    <script>
+        // Выбор устройств
+        document.querySelectorAll('.device-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.device-item').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Отправка сообщений в чат
+        const chatInput = document.querySelector('.chat-input');
+        const chatSend = document.querySelector('.chat-send');
+        const chatMessages = document.querySelector('.chat-messages');
+
+        function addMessage(text, isUser = true) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = text;
+            
+            const time = document.createElement('div');
+            time.className = 'message-time';
+            const now = new Date();
+            time.textContent = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            
+            messageDiv.appendChild(bubble);
+            messageDiv.appendChild(time);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (text) {
+                addMessage(text, true);
+                chatInput.value = '';
+                
+                // Имитация ответа AI
+                setTimeout(() => {
+                    addMessage('Команда принята. Выполняю...', false);
+                }, 500);
+            }
+        }
+
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Консоль
+        const consoleInput = document.querySelector('.console-input');
+        const consoleContent = document.querySelector('.console-content');
+
+        consoleInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const line = document.createElement('div');
+                line.className = 'console-line';
+                line.textContent = '> ' + this.value;
+                consoleContent.appendChild(line);
+                
+                // Имитация ответа
+                if (this.value.toLowerCase().includes('show')) {
+                    setTimeout(() => {
+                        const resp = document.createElement('div');
+                        resp.className = 'console-line';
+                        resp.textContent = 'CORE-1# show running-config';
+                        consoleContent.appendChild(resp);
+                        consoleContent.scrollTop = consoleContent.scrollHeight;
+                    }, 300);
+                }
+                
+                this.value = '';
+                consoleContent.scrollTop = consoleContent.scrollHeight;
+            }
+        });
+
+        // Кнопка очистки консоли
+        document.querySelector('.console-clear').addEventListener('click', function() {
+            consoleContent.innerHTML = '';
+        });
+
+        // Кнопки действий
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => this.style.transform = '', 200);
+                
+                // Добавляем в консоль
+                const line = document.createElement('div');
+                line.className = 'console-line success';
+                line.textContent = `✅ Выполнено: ${this.textContent}`;
+                consoleContent.appendChild(line);
+                consoleContent.scrollTop = consoleContent.scrollHeight;
+            });
+        });
+
+        // Выбор узлов топологии
+        document.querySelectorAll('.topology-node').forEach(node => {
+            if (node.textContent.trim()) {
+                node.addEventListener('click', function() {
+                    const line = document.createElement('div');
+                    line.className = 'console-line';
+                    line.textContent = `> Выбран узел: ${this.textContent}`;
+                    consoleContent.appendChild(line);
+                    consoleContent.scrollTop = consoleContent.scrollHeight;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

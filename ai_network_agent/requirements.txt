@@ -1,0 +1,8 @@
+streamlit
+requests
+langchain
+sentence-transformers
+chromadb
+pypdf
+python-docx
+pyyaml

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Network Agent - Дизайн интерфейса</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Основной контейнер */
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Шапка */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1::before {
+            content: "🌐";
+            font-size: 32px;
+        }
+
+        .header h1::after {
+            content: "v2.0";
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 20px;
+            margin-left: 15px;
+            font-weight: 400;
+        }
+
+        /* Основная сетка */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 400px;
+            gap: 20px;
+            padding: 25px;
+            background: #f8fafd;
+            min-height: 700px;
+        }
+
+        /* Левая панель - Элементы сети */
+        .left-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eef2f6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title::before {
+            content: "📊";
+            font-size: 20px;
+        }
+
+        .device-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .device-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8fafd;
+            border-radius: 12px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .device-item:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateX(5px);
+        }
+
+        .device-item.selected {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .device-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .status-online {
+            background: #4caf50;
+            box-shadow: 0 0 10px #4caf50;
+        }
+
+        .status-offline {
+            background: #f44336;
+        }
+
+        .status-warning {
+            background: #ff9800;
+        }
+
+        .device-name {
+            flex: 1;
+            font-weight: 500;
+            color: #1a1a2e;
+        }
+
+        .device-port {
+            font-size: 12px;
+            color: #666;
+            background: #eef2f6;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .device-type {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* Центральная панель - Топология */
+        .center-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .center-panel .panel-title::before {
+            content: "🌐";
+        }
+
+        .topology-container {
+            flex: 1;
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            min-height: 400px;
+            background-image: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .topology-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            height: 100%;
+            align-items: center;
+        }
+
+        .topology-node {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .topology-node.core {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .topology-node.agg {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .topology-node::before {
+            content: "";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        .topology-node::after {
+            content: "▼";
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 20px;
+        }
+
+        .topology-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .connection-line {
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 2;
+            stroke-dasharray: 5,5;
+        }
+
+        /* Правая панель - Чат с LLM */
+        .right-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-panel .panel-title::before {
+            content: "💬";
+        }
+
+        .chat-messages {
+            flex: 1;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8fafd;
+            border-radius: 16px;
+            margin-bottom: 15px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-user {
+            align-items: flex-end;
+        }
+
+        .message-assistant {
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message-user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-assistant .message-bubble {
+            background: #eef2f6;
+            color: #1a1a2e;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #eef2f6;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .chat-input input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .chat-input button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chat-input button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Нижняя панель - Консоль */
+        .console-panel {
+            grid-column: 1 / -1;
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #fff;
+            opacity: 0.8;
+        }
+
+        .console-title {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .console-clear {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .console-content {
+            background: #0f0f1a;
+            border-radius: 12px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4afc4a;
+            height: 150px;
+            overflow-y: auto;
+        }
+
+        .console-line {
+            margin: 2px 0;
+            white-space: pre-wrap;
+        }
+
+        .console-line.error {
+            color: #ff6b6b;
+        }
+
+        .console-line.success {
+            color: #51cf66;
+        }
+
+        .console-line.warning {
+            color: #ffd43b;
+        }
+
+        .console-prompt {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .console-prompt span {
+            color: #4afc4a;
+        }
+
+        .console-prompt input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #4afc4a;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* Кнопки действий */
+        .action-buttons {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #eef2f6;
+            color: #1a1a2e;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <div class="header">
+            <h1>ИИ АГЕНТ УПРАВЛЕНИЯ СЕТЬЮ</h1>
+        </div>
+
+        <!-- Основная сетка -->
+        <div class="main-grid">
+            <!-- Левая панель - Элементы сети -->
+            <div class="left-panel">
+                <div class="panel-title">ЭЛЕМЕНТЫ СЕТИ</div>
+                <div class="device-list">
+                    <div class="device-item selected">
+                        <div class="device-status status-online"></div>
+                        <div class="device-name">CORE-1</div>
+                        <div class="device-port">5002</div>
+                    </div>
+                    <div class="device-item">
+                        <div class="device-status status-online"></div>
+                        <div class="device-name">CORE-2</div>
+                        <div class="device-port">5003</div>
+                    </div>
+                    <div class="device-item">
+                        <div class="device-status status-online"></div>
+                        <div class="device-name">AGG-1</div>
+                        <div class="device-port">5004</div>
+                    </div>
+                    <div class="device-item">
+                        <div class="device-status status-warning"></div>
+                        <div class="device-name">AGG-2</div>
+                        <div class="device-port">5005</div>
+                        <div class="device-type">(высокая нагрузка)</div>
+                    </div>
+                    <div class="device-item">
+                        <div class="device-status status-online"></div>
+                        <div class="device-name">CE-1</div>
+                        <div class="device-port">5000</div>
+                    </div>
+                    <div class="device-item">
+                        <div class="device-status status-offline"></div>
+                        <div class="device-name">CE-2</div>
+                        <div class="device-port">5001</div>
+                        <div class="device-type">(offline)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Центральная панель - Топология -->
+            <div class="center-panel">
+                <div class="panel-title">ТОПОЛОГИЯ СЕТИ</div>
+                <div class="topology-container">
+                    <div class="topology-grid">
+                        <div class="topology-node core">CORE-1</div>
+                        <div class="topology-node core">CORE-2</div>
+                        <div></div>
+                        <div class="topology-node agg">AGG-1</div>
+                        <div class="topology-node agg">AGG-2</div>
+                        <div></div>
+                        <div class="topology-node">CE-1</div>
+                        <div class="topology-node">CE-2</div>
+                    </div>
+                    <svg class="topology-connections" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                        <line x1="15%" y1="25%" x2="35%" y2="45%" class="connection-line"/>
+                        <line x1="45%" y1="25%" x2="65%" y2="45%" class="connection-line"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Правая панель - Чат с LLM -->
+            <div class="right-panel">
+                <div class="panel-title">ЧАТ С AI</div>
+                <div class="chat-messages">
+                    <div class="chat-message message-assistant">
+                        <div class="message-bubble">
+                            Здравствуйте! Я AI-агент управления сетью. Чем могу помочь?
+                        </div>
+                        <div class="message-time">16:45:23</div>
+                    </div>
+                    <div class="chat-message message-user">
+                        <div class="message-bubble">
+                            Покажи интерфейсы на CORE-1
+                        </div>
+                        <div class="message-time">16:45:30</div>
+                    </div>
+                    <div class="chat-message message-assistant">
+                        <div class="message-bubble">
+                            оркестратору: CORE1 стоп оркестратор
+                            оркестратору: show ip interface brief стоп оркестратор
+                        </div>
+                        <div class="message-time">16:45:35</div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" placeholder="Введите сообщение...">
+                    <button>➤</button>
+                </div>
+            </div>
+
+            <!-- Нижняя панель - Консоль -->
+            <div class="console-panel">
+                <div class="console-header">
+                    <span class="console-title">📟 КОНСОЛЬ УПРАВЛЕНИЯ</span>
+                    <button class="console-clear">ОЧИСТИТЬ</button>
+                </div>
+                <div class="console-content">
+                    <div class="console-line">> Система инициализирована</div>
+                    <div class="console-line success">✅ Подключение к CORE-1 установлено</div>
+                    <div class="console-line">> Выполнение команды: show ip interface brief</div>
+                    <div class="console-line">Interface       IP-Address      OK? Method Status</div>
+                    <div class="console-line">GigabitEthernet0/0 192.168.1.1 YES DHCP up</div>
+                    <div class="console-line warning">⚠️ Высокая загрузка на AGG-2</div>
+                    <div class="console-line error">❌ CE-2 не отвечает</div>
+                </div>
+                <div class="console-prompt">
+                    <span>></span>
+                    <input type="text" placeholder="Введите команду..." value="show version">
+                </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="action-buttons">
+                <button class="btn btn-secondary">📂 ОТКРЫТЬ</button>
+                <button class="btn btn-primary">✅ ПРИМЕНИТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Небольшой скрипт для интерактивности -->
+    <script>
+        // Добавляем немного интерактивности для демо
+        document.querySelectorAll('.device-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.device-item').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Эмуляция ввода в консоли
+        const consoleInput = document.querySelector('.console-prompt input');
+        if (consoleInput) {
+            consoleInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const consoleContent = document.querySelector('.console-content');
+                    const newLine = document.createElement('div');
+                    newLine.className = 'console-line';
+                    newLine.textContent = '> ' + this.value;
+                    consoleContent.appendChild(newLine);
+                    this.value = '';
+                    consoleContent.scrollTop = consoleContent.scrollHeight;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
