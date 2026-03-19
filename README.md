@@ -1,7 +1,8 @@
 # ИИ агент управления сетью. GNS3 + AI
 
 ## 1. О проекте
-**Цель** Создать систему управления сетевыми устройствами в эмуляторе GNS3 через ИИ-агента.
+**Цель:** Создать систему управления сетевыми устройствами в эмуляторе GNS3 через ИИ-агента.
+
 **Что сделано:** 
   В GNS3 созданы элементы первой из 4 автономных систем сети по топологии: ядро-агрегация-доступ-хосты. Настроены OSPF, NAT, BGP.
   Создание и настройка автономной системы написаны скриптами Python: 01_creat_as1.py; 02_configure_core.py; 03_configure_fwce.py; 04_core_fwce_ospf.py; 05_configure_agg.py
@@ -40,21 +41,29 @@
 Добавить три AS в GNS3, сделать мониторинг, статистику по логам с дашбордами...
 
 # 6. Как запустить
-Требования: GNS3 с образами Cisco (c7200, c3745, c3725), Python, Ollama с моделью qwen2.5:7b
-Старт: 
-# Создать топологию
-python scripts/01_create_as1.py
-# Настроить ядро
-python scripts/02_configure_core.py
-# Настроить CE
-python scripts/03_configure_fwce.py
-…
 
-# Запустить веб-интерфейс (Anaconda)
+Требования: GNS3 с образами Cisco (c7200, c3745, c3725), Python, Ollama с моделью qwen2.5:7b
+
+Старт: 
+
+- Создать топологию:
+python scripts/01_create_as1.py
+
+ - Настроить ядро:
+python scripts/02_configure_core.py
+
+ - Настроить CE:
+python scripts/03_configure_fwce.py
+
+ - ...
+
+ - Запустить веб-интерфейс (Anaconda):
 streamlit run app/app.py
 
 
-# 7. # Контакты: 
+# 7.  Контакты:
+
 **Архитектор проекта:** Александр Орел
+
 **E-mail:** [oryol.aleks@yandex.ru](mailto:oryol.aleks@yandex.ru)  
 **GitHub:** [AI-Network-GNS3](https://github.com/aleks858/AI-Network-GNS3)
